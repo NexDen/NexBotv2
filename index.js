@@ -5,8 +5,6 @@ var Colors = require("./colors.js")
 const fs = require("node:fs")
 const path = require("node:path")
 
-const readline = require("readline")
-
 var debug = false;
 
 
@@ -15,15 +13,6 @@ var { komut_log , düzenle_log } = require("./log_messages.js")
 const { handle_message } = require("./handle_messages");
 
 var {handle_member_add, handle_member_leave} = require("./handle_member")
-
-// test yorumu.
-
-const {execute: aktif_execute} = require("./fonksiyonlar/aktif.js")
-const {execute: bakim_execute} = require("./fonksiyonlar/bakim.js")
-
-// zort
-
-// abdü
 
 var client = new Client({
     intents: [
@@ -34,25 +23,9 @@ var client = new Client({
 	],
 })
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output:process.stdout
-})
-
 client.once('ready', () => { 
     console.log(`\x1b[33m${client.user.username}\x1b[0m\x1b[1m'a bağlanıldı!\x1b[0m'`)
-    client.user.setPresence({ activities: [{ name: 'Minecraft'}], status: 'online' });
-});
-
-var guildId = "961714430461227028"
-var channelId = "961714430461227031"
-
-rl.on('line', (input) => {
-    const guild = client.guilds.cache.find(guild => guild.id === guildId)
-    const channel = guild.channels.cache.find(channel => channel.id === channelId);
-    if (channel) {
-        channel.send(input);
-    }
+    client.user.setPresence({ activities: [{ name: 'NexBotv2'}], status: 'online' });
 });
 
 
@@ -64,7 +37,6 @@ const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('
 for (const file of commandFiles) {
 	const filePath = path.join(commandsPath, file);
 	const command = require(filePath);
-	// Set a new item in the Collection with the key as the command name and the value as the exported module
 	if ('data' in command && 'execute' in command) {
 		client.commands.set(command.data.name, command);
 	} else {
@@ -99,8 +71,6 @@ client.on("interactionCreate", async interaction => {
             ephemeral: true
         })
     }
-
-
 })
 
 client.on("guildCreate", async guild => {
@@ -118,19 +88,6 @@ client.on("guildMemberRemove", async member => {
 })
 
 client.on("messageCreate", async message =>{
-
-    if (message.content === "!aktif"){
-        if (message.member.permissions.has("Administrator")){
-            aktif_execute(message)
-        }
-    }
-
-    if (message.content === "!bakim"){
-        if (message.member.permissions.has("Administrator")){
-            bakim_execute(message)
-        }
-    }
-
     handle_message(message, client, debug)
 })
 
